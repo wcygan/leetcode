@@ -4,31 +4,33 @@ import java.util.HashMap;
 import java.util.Map;
 
 class Solution {
-    // Trick, for every character in "s", add one to it's count
-    //        for every character in "t", remove one from it's count
-    //        if every entry is 0 at the end, it's an anagram
     public boolean isAnagram(String s, String t) {
         if (s.length() != t.length()) {
             return false;
         }
 
+        String first = keyFromMap(count(s));
+        String second = keyFromMap(count(t));
+
+
+        return first.equals(second);
+    }
+
+    HashMap<Character, Integer> count(String string) {
         HashMap<Character, Integer> count = new HashMap<>();
-
-        for (int i = 0; i < s.length(); i++) {
-            Character first = s.charAt(i);
-            Character second = t.charAt(i);
+        for (int i = 0; i < string.length(); i++) {
+            Character first = string.charAt(i);
             count.putIfAbsent(first, 0);
-            count.putIfAbsent(second, 0);
             count.put(first, count.get(first) + 1);
-            count.put(second, count.get(second) - 1);
         }
+        return count;
+    }
 
-        for (Map.Entry<Character, Integer> entry : count.entrySet()) {
-            if (entry.getValue() != 0) {
-                return false;
-            }
-        }
-
-        return true;
+    String keyFromMap(HashMap<Character, Integer> map) {
+        return map.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByKey())
+                .map(e -> String.format("%c%d", e.getKey(), e.getValue()))
+                .reduce("", (a, b) -> a + b);
     }
 }
